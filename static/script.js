@@ -1,13 +1,13 @@
 let predictionCounter = 0;
 
-function startApp(){
+function startApp() {
 
 document.getElementById("welcome-screen").style.display = "none";
 document.getElementById("app-screen").classList.remove("hidden");
 
 }
 
-function exitApp(){
+function exitApp() {
 
 document.getElementById("app-screen").classList.add("hidden");
 document.getElementById("welcome-screen").style.display = "flex";
@@ -40,7 +40,7 @@ ctx.beginPath();
 
 canvas.addEventListener("mousemove", draw);
 
-function draw(event){
+function draw(event) {
 
 if(!drawing) return;
 
@@ -52,17 +52,19 @@ ctx.moveTo(event.offsetX,event.offsetY);
 
 }
 
-function clearCanvas(){
+function clearCanvas() {
 
 ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
 document.getElementById("result").innerHTML="";
 document.getElementById("bars").innerHTML="";
+document.getElementById("confidence").innerHTML="";
+document.getElementById("top3").innerHTML="";
 
 }
 
-function predict(){
+function predict() {
 
 let data = canvas.toDataURL("image/png");
 
@@ -82,16 +84,25 @@ body:JSON.stringify({image:data})
 
 .then(res => res.json())
 
-.then(data =>{
+.then(data => {
 
 document.getElementById("loading").classList.add("hidden");
 
 document.getElementById("result").innerHTML =
 "🔢 Número reconocido: " + data.digit;
 
+// confianza del modelo
+
+let confidence = data.probabilities[data.digit];
+
+document.getElementById("confidence").innerHTML =
+"📊 Confianza del modelo: " + confidence + "%";
+
 predictionCounter++;
 
 document.getElementById("prediction-count").innerText = predictionCounter;
+
+// barras de probabilidades
 
 let barsHTML="";
 
@@ -117,12 +128,47 @@ setTimeout(()=>{
 
 for(let i=0;i<10;i++){
 
-document.getElementById(`bar-${i}`).style.width = data.probabilities[i] + "%";
+document.getElementById("bar-" + i).style.width = data.probabilities[i] + "%";
 
 }
 
 },100);
 
+// TOP 3
+
+let top3List = document.getElementById("top3");
+
+top3List.innerHTML = "";
+
+if(data.top3){
+
+data.top3.forEach(item =>{
+
+let li = document.createElement("li");
+
+li.innerText = "Número " + item[0] + " → " + item[1] + "%";
+
+top3List.appendChild(li);
+
+});
+
+}
+
+// imagen que ve el modelo
+
+if(data.processed_image){
+
+document.getElementById("processed-image").src =
+"data:image/png;base64," + data.processed_image;
+
+}
+
 })
+
+.catch(error => {
+
+console.error("Error en la predicción:", error);
+
+});
 
 }

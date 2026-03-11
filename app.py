@@ -73,7 +73,8 @@ def predict():
 
         return jsonify({
             "digit":1,
-            "probabilities":probs
+            "probabilities":probs,
+            "top3":[[1,99.9]]
         })
 
     prediction = model.predict(img)
@@ -84,11 +85,29 @@ def predict():
 
     probabilities = [round(p*100,2) for p in probabilities]
 
+    top3 = sorted(
+        [(i, probabilities[i]) for i in range(10)],
+        key=lambda x: x[1],
+        reverse=True
+    )[:3]
+
+    # generar imagen 28x28 que ve el modelo
+
+    processed_img = (img.reshape(28,28) * 255).astype(np.uint8)
+
+    buffer = io.BytesIO()
+
+    Image.fromarray(processed_img).save(buffer, format="PNG")
+
+    img_base64 = base64.b64encode(buffer.getvalue()).decode()
+
     return jsonify({
         "digit": digit,
-        "probabilities": probabilities
+        "probabilities": probabilities,
+        "top3": top3,
+        "processed_image": img_base64
     })
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
