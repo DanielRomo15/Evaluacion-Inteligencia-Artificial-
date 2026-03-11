@@ -1,21 +1,71 @@
 body{
 
-background:#f4f6f8;
-font-family:Arial;
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+
+background:linear-gradient(135deg,#141E30,#243B55);
+
+color:white;
 text-align:center;
 
 }
 
-.container{
+.welcome{
+
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+
+}
+
+.start-btn{
+
+margin-top:25px;
+padding:15px 30px;
+font-size:18px;
+
+background:#00b4ff;
+border:none;
+border-radius:25px;
+
+color:white;
+cursor:pointer;
+
+}
+
+.hidden{
+display:none;
+}
+
+.app{
+padding-top:40px;
+}
+
+header h1{
+font-size:36px;
+margin-bottom:5px;
+}
+
+.guide{
+margin-bottom:20px;
+font-size:15px;
+opacity:0.9;
+}
+
+.card{
 
 background:white;
-width:500px;
-margin:auto;
-margin-top:50px;
-padding:30px;
+color:black;
 
-border-radius:10px;
-box-shadow:0px 5px 15px rgba(0,0,0,0.2);
+padding:30px;
+border-radius:15px;
+
+box-shadow:0px 15px 30px rgba(0,0,0,0.4);
+
+width:350px;
+margin:auto;
 
 }
 
@@ -23,36 +73,100 @@ canvas{
 
 border:2px solid #333;
 background:white;
+
 width:280px;
 height:280px;
 
+border-radius:10px;
+
+}
+
+.buttons{
+margin-top:20px;
 }
 
 button{
 
-margin:10px;
 padding:10px 20px;
-font-size:16px;
-
 border:none;
-border-radius:5px;
+border-radius:20px;
 
-background:#007BFF;
-color:white;
-
+font-size:15px;
 cursor:pointer;
+
+margin:5px;
 
 }
 
-button:hover{
+.predict-btn{
+background:#4CAF50;
+color:white;
+}
 
-background:#0056b3;
+.clear-btn{
+background:#f44336;
+color:white;
+}
 
+.exit-btn{
+background:#555;
+color:white;
 }
 
 #result{
+margin-top:15px;
+font-size:22px;
+}
 
+.loading{
+
+margin-top:10px;
+font-size:18px;
+
+animation:blink 1s infinite;
+
+}
+
+@keyframes blink{
+
+0%{opacity:1;}
+50%{opacity:0.3;}
+100%{opacity:1;}
+
+}
+
+#bars{
+margin-top:15px;
+text-align:left;
+}
+
+.bar{
+
+background:#ddd;
+border-radius:5px;
+height:18px;
+overflow:hidden;
+
+}
+
+.fill{
+
+background:#2196F3;
+height:100%;
+width:0%;
+
+transition: width 1s ease-in-out;
+
+}
+
+.counter{
 margin-top:20px;
-color:#333;
+font-size:16px;
+font-weight:bold;
+}
 
+footer{
+margin-top:15px;
+font-size:12px;
+opacity:0.7;
 }

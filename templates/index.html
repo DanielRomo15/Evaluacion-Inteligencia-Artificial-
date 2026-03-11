@@ -11,24 +11,72 @@
 
 <body>
 
-<div class="container">
+<div id="welcome-screen" class="welcome">
 
-<h1>Reconocimiento de Dígitos con Machine Learning</h1>
+<h1>🤖 Sistema de Reconocimiento de Dígitos</h1>
 
-<p>Dibuja un número del 0 al 9</p>
+<p>
+Este sistema utiliza Inteligencia Artificial para reconocer números escritos a mano.
+El modelo fue entrenado con el dataset MNIST utilizando una red neuronal convolucional.
+</p>
+
+<button class="start-btn" onclick="startApp()">
+🚀 Iniciar sistema
+</button>
+
+</div>
+
+
+
+<div id="app-screen" class="app hidden">
+
+<header>
+
+<h1>✏ Dibujar número</h1>
+
+<p id="welcome-message"></p>
+
+<p class="guide">
+✏ Dibuja un número del <b>0 al 9</b> dentro del área blanca y presiona <b>Predecir</b>.
+</p>
+
+</header>
+
+
+<div class="card">
 
 <canvas id="canvas"></canvas>
 
 <div class="buttons">
 
-<button onclick="predict()">Predecir</button>
-<button onclick="clearCanvas()">Limpiar</button>
+<button class="predict-btn" onclick="predict()">🤖 Predecir</button>
+
+<button class="clear-btn" onclick="clearCanvas()">🧹 Limpiar</button>
+
+<button class="exit-btn" onclick="exitApp()">⬅ Salir</button>
 
 </div>
 
 <h2 id="result"></h2>
 
+<h3 id="confidence"></h3>
+
+<div id="loading" class="loading hidden">
+🔎 Analizando imagen...
+</div>
+
 <div id="bars"></div>
+
+<div class="counter">
+📊 Predicciones realizadas: <span id="prediction-count">0</span>
+</div>
+
+</div>
+
+
+<footer>
+<p>🧠 Modelo entrenado con MNIST</p>
+</footer>
 
 </div>
 

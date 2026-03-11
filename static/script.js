@@ -1,3 +1,19 @@
+let predictionCounter = 0;
+
+function startApp(){
+
+document.getElementById("welcome-screen").style.display = "none";
+document.getElementById("app-screen").classList.remove("hidden");
+
+}
+
+function exitApp(){
+
+document.getElementById("app-screen").classList.add("hidden");
+document.getElementById("welcome-screen").style.display = "flex";
+
+}
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
@@ -8,14 +24,18 @@ ctx.fillStyle = "white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
 ctx.strokeStyle = "black";
+ctx.lineWidth = 25;
+ctx.lineCap = "round";
 
 let drawing = false;
 
 canvas.addEventListener("mousedown", () => drawing = true);
 
 canvas.addEventListener("mouseup", () => {
+
 drawing = false;
 ctx.beginPath();
+
 });
 
 canvas.addEventListener("mousemove", draw);
@@ -23,9 +43,6 @@ canvas.addEventListener("mousemove", draw);
 function draw(event){
 
 if(!drawing) return;
-
-ctx.lineWidth = 25;
-ctx.lineCap = "round";
 
 ctx.lineTo(event.offsetX,event.offsetY);
 ctx.stroke();
@@ -37,17 +54,19 @@ ctx.moveTo(event.offsetX,event.offsetY);
 
 function clearCanvas(){
 
-ctx.fillStyle = "white";
+ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
-document.getElementById("result").innerHTML = "";
-document.getElementById("bars").innerHTML = "";
+document.getElementById("result").innerHTML="";
+document.getElementById("bars").innerHTML="";
 
 }
 
 function predict(){
 
 let data = canvas.toDataURL("image/png");
+
+document.getElementById("loading").classList.remove("hidden");
 
 fetch("/predict",{
 
@@ -65,36 +84,44 @@ body:JSON.stringify({image:data})
 
 .then(data =>{
 
-document.getElementById("result").innerHTML =
-"Numero reconocido: " + data.digit;
+document.getElementById("loading").classList.add("hidden");
 
-let barsHTML = "";
+document.getElementById("result").innerHTML =
+"🔢 Número reconocido: " + data.digit;
+
+predictionCounter++;
+
+document.getElementById("prediction-count").innerText = predictionCounter;
+
+let barsHTML="";
 
 for(let i=0;i<10;i++){
 
 barsHTML += `
-<div style="margin:5px 0;">
-${i}
-<div style="
-background:#ddd;
-width:100%;
-height:20px;
-border-radius:5px;
-overflow:hidden;
-">
-<div style="
-background:#007BFF;
-width:${data.probabilities[i]}%;
-height:100%;
-"></div>
+<div style="margin:5px 0">
+<strong>${i}</strong>
+<div class="bar">
+<div class="fill" id="bar-${i}"></div>
 </div>
 ${data.probabilities[i]}%
 </div>
-`
+`;
 
 }
 
 document.getElementById("bars").innerHTML = barsHTML;
+
+// animar barras
+
+setTimeout(()=>{
+
+for(let i=0;i<10;i++){
+
+document.getElementById(`bar-${i}`).style.width = data.probabilities[i] + "%";
+
+}
+
+},100);
 
 })
 
