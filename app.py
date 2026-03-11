@@ -7,6 +7,7 @@ import io
 
 app = Flask(__name__)
 
+# cargar modelo entrenado
 model = load_model("model/digit_model.h5")
 
 
@@ -14,8 +15,10 @@ def preprocess_image(img):
 
     img = np.array(img)
 
+    # invertir colores
     img = 255 - img
 
+    # limpiar ruido
     img[img < 50] = 0
 
     coords = np.column_stack(np.where(img > 0))
@@ -28,26 +31,29 @@ def preprocess_image(img):
         height = y_max - y_min
         width = x_max - x_min
 
-        # detección simple del número 1
+        # detección especial del número 1
         if width < height * 0.25 and height > 60:
-            return "one"
+            return "one", None
 
         img = img[y_min:y_max, x_min:x_max]
 
     img = Image.fromarray(img)
 
-    img = img.resize((20,20))
+    # reducir a 20x20
+    img = img.resize((20, 20))
 
-    new_img = Image.new("L",(28,28))
-    new_img.paste(img,(4,4))
+    # centrar en imagen 28x28
+    new_img = Image.new("L", (28, 28))
+    new_img.paste(img, (4, 4))
 
-    img = np.array(new_img)
+    img_array = np.array(new_img)
 
-    img = img / 255.0
+    # normalizar
+    img_array = img_array / 255.0
 
-    img = img.reshape(1,28,28,1)
+    img_array = img_array.reshape(1, 28, 28, 1)
 
-    return img
+    return img_array, new_img
 
 
 @app.route("/")
@@ -64,20 +70,21 @@ def predict():
 
     img = Image.open(io.BytesIO(base64.b64decode(image_data))).convert("L")
 
-    img = preprocess_image(img)
+    processed, processed_img = preprocess_image(img)
 
-    if isinstance(img,str) and img == "one":
+    # si detectó el numero 1 manualmente
+    if isinstance(processed, str) and processed == "one":
 
         probs = [0]*10
         probs[1] = 99.9
 
         return jsonify({
-            "digit":1,
-            "probabilities":probs,
-            "top3":[[1,99.9]]
+            "digit": 1,
+            "probabilities": probs,
+            "top3": [(1, 99.9), (7, 0.1), (4, 0.0)]
         })
 
-    prediction = model.predict(img)
+    prediction = model.predict(processed)
 
     digit = int(np.argmax(prediction))
 
@@ -85,27 +92,23 @@ def predict():
 
     probabilities = [round(p*100,2) for p in probabilities]
 
+    # calcular top 3
     top3 = sorted(
         [(i, probabilities[i]) for i in range(10)],
         key=lambda x: x[1],
         reverse=True
     )[:3]
 
-    # generar imagen 28x28 que ve el modelo
-
-    processed_img = (img.reshape(28,28) * 255).astype(np.uint8)
-
+    # convertir imagen 28x28 a base64 para mostrar en frontend
     buffer = io.BytesIO()
-
-    Image.fromarray(processed_img).save(buffer, format="PNG")
-
-    img_base64 = base64.b64encode(buffer.getvalue()).decode()
+    processed_img.save(buffer, format="PNG")
+    img_str = base64.b64encode(buffer.getvalue()).decode()
 
     return jsonify({
         "digit": digit,
         "probabilities": probabilities,
         "top3": top3,
-        "processed_image": img_base64
+        "processed_image": img_str
     })
 
 

@@ -64,8 +64,18 @@ border-radius:15px;
 
 box-shadow:0px 15px 30px rgba(0,0,0,0.4);
 
-width:350px;
+width:700px;
 margin:auto;
+
+}
+
+.drawing-area{
+
+display:flex;
+justify-content:center;
+align-items:center;
+gap:50px;
+margin-bottom:20px;
 
 }
 
@@ -78,6 +88,17 @@ width:280px;
 height:280px;
 
 border-radius:10px;
+
+}
+
+.ai-box img{
+
+border:2px solid #333;
+border-radius:10px;
+background:white;
+padding:10px;
+
+image-rendering:pixelated;
 
 }
 
@@ -115,7 +136,8 @@ color:white;
 
 #result{
 margin-top:15px;
-font-size:22px;
+font-size:26px;
+font-weight:bold;
 }
 
 .loading{
@@ -156,6 +178,74 @@ height:100%;
 width:0%;
 
 transition: width 1s ease-in-out;
+
+}
+
+.prediction-info{
+
+margin-top:20px;
+
+}
+
+/* TARJETAS TOP 3 */
+
+.top3-cards{
+
+display:flex;
+justify-content:center;
+gap:15px;
+margin-top:10px;
+
+}
+
+.prediction-card{
+
+background:linear-gradient(135deg,#00c6ff,#0072ff);
+
+color:white;
+
+width:80px;
+height:100px;
+
+border-radius:15px;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+
+box-shadow:0 10px 20px rgba(0,0,0,0.3);
+
+font-weight:bold;
+
+transition:0.3s;
+
+}
+
+.prediction-card:hover{
+
+transform:translateY(-5px) scale(1.05);
+
+}
+
+.prediction-card .digit{
+
+font-size:28px;
+
+}
+
+.prediction-card .prob{
+
+font-size:16px;
+
+margin-top:5px;
+
+}
+
+.prediction-card .medal{
+
+margin-top:5px;
+font-size:18px;
 
 }
 

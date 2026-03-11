@@ -1,18 +1,24 @@
 let predictionCounter = 0;
 
-function startApp() {
+/* INICIAR APP */
+
+function startApp(){
 
 document.getElementById("welcome-screen").style.display = "none";
 document.getElementById("app-screen").classList.remove("hidden");
 
 }
 
-function exitApp() {
+/* SALIR */
+
+function exitApp(){
 
 document.getElementById("app-screen").classList.add("hidden");
 document.getElementById("welcome-screen").style.display = "flex";
 
 }
+
+/* CANVAS */
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -20,14 +26,20 @@ const ctx = canvas.getContext("2d");
 canvas.width = 280;
 canvas.height = 280;
 
+/* fondo blanco */
+
 ctx.fillStyle = "white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
+
+/* estilo de dibujo */
 
 ctx.strokeStyle = "black";
 ctx.lineWidth = 25;
 ctx.lineCap = "round";
 
 let drawing = false;
+
+/* eventos mouse */
 
 canvas.addEventListener("mousedown", () => drawing = true);
 
@@ -40,7 +52,9 @@ ctx.beginPath();
 
 canvas.addEventListener("mousemove", draw);
 
-function draw(event) {
+/* dibujar */
+
+function draw(event){
 
 if(!drawing) return;
 
@@ -52,7 +66,9 @@ ctx.moveTo(event.offsetX,event.offsetY);
 
 }
 
-function clearCanvas() {
+/* LIMPIAR */
+
+function clearCanvas(){
 
 ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -61,10 +77,13 @@ document.getElementById("result").innerHTML="";
 document.getElementById("bars").innerHTML="";
 document.getElementById("confidence").innerHTML="";
 document.getElementById("top3").innerHTML="";
+document.getElementById("processed-image").src="";
 
 }
 
-function predict() {
+/* PREDICCIÓN */
+
+function predict(){
 
 let data = canvas.toDataURL("image/png");
 
@@ -88,33 +107,41 @@ body:JSON.stringify({image:data})
 
 document.getElementById("loading").classList.add("hidden");
 
-document.getElementById("result").innerHTML =
-"🔢 Número reconocido: " + data.digit;
+/* RESULTADO PRINCIPAL */
 
-// confianza del modelo
+document.getElementById("result").innerHTML =
+"🔢 Número reconocido: <b>" + data.digit + "</b>";
+
+/* CONFIANZA */
 
 let confidence = data.probabilities[data.digit];
 
 document.getElementById("confidence").innerHTML =
-"📊 Confianza del modelo: " + confidence + "%";
+"📊 Confianza del modelo: <b>" + confidence + "%</b>";
+
+/* CONTADOR */
 
 predictionCounter++;
 
 document.getElementById("prediction-count").innerText = predictionCounter;
 
-// barras de probabilidades
+/* BARRAS DE PROBABILIDAD */
 
 let barsHTML="";
 
 for(let i=0;i<10;i++){
 
 barsHTML += `
-<div style="margin:5px 0">
+<div style="margin:6px 0">
+
 <strong>${i}</strong>
+
 <div class="bar">
 <div class="fill" id="bar-${i}"></div>
 </div>
+
 ${data.probabilities[i]}%
+
 </div>
 `;
 
@@ -122,39 +149,54 @@ ${data.probabilities[i]}%
 
 document.getElementById("bars").innerHTML = barsHTML;
 
-// animar barras
+/* ANIMACIÓN DE BARRAS */
 
 setTimeout(()=>{
 
 for(let i=0;i<10;i++){
 
-document.getElementById("bar-" + i).style.width = data.probabilities[i] + "%";
+document.getElementById("bar-" + i).style.width =
+data.probabilities[i] + "%";
 
 }
 
 },100);
 
-// TOP 3
+/* TOP 3 EN TARJETAS */
 
-let top3List = document.getElementById("top3");
+let top3Container = document.getElementById("top3");
 
-top3List.innerHTML = "";
+top3Container.innerHTML = "";
 
 if(data.top3){
 
-data.top3.forEach(item =>{
+data.top3.forEach((item,index)=>{
 
-let li = document.createElement("li");
+let medal = "";
 
-li.innerText = "Número " + item[0] + " → " + item[1] + "%";
+if(index === 0) medal = "🥇";
+if(index === 1) medal = "🥈";
+if(index === 2) medal = "🥉";
 
-top3List.appendChild(li);
+let card = `
+<div class="prediction-card">
+
+<div class="digit">${item[0]}</div>
+
+<div class="prob">${item[1]}%</div>
+
+<div class="medal">${medal}</div>
+
+</div>
+`;
+
+top3Container.innerHTML += card;
 
 });
 
 }
 
-// imagen que ve el modelo
+/* IMAGEN QUE VE LA IA */
 
 if(data.processed_image){
 
@@ -168,6 +210,8 @@ document.getElementById("processed-image").src =
 .catch(error => {
 
 console.error("Error en la predicción:", error);
+
+document.getElementById("loading").classList.add("hidden");
 
 });
 

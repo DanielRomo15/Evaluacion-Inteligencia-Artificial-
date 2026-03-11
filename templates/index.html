@@ -34,10 +34,8 @@ El modelo fue entrenado con el dataset MNIST utilizando una red neuronal convolu
 
 <h1>✏ Dibujar número</h1>
 
-<p id="welcome-message"></p>
-
 <p class="guide">
-✏ Dibuja un número del <b>0 al 9</b> dentro del área blanca y presiona <b>Predecir</b>.
+Dibuja un número del <b>0 al 9</b> y presiona <b>Predecir</b>.
 </p>
 
 </header>
@@ -45,7 +43,26 @@ El modelo fue entrenado con el dataset MNIST utilizando una red neuronal convolu
 
 <div class="card">
 
+<div class="drawing-area">
+
+<div class="canvas-box">
+
+<h3>✏ Dibujo del usuario</h3>
+
 <canvas id="canvas"></canvas>
+
+</div>
+
+<div class="ai-box">
+
+<h3>🧠 Imagen que ve la IA</h3>
+
+<img id="processed-image" width="120">
+
+</div>
+
+</div>
+
 
 <div class="buttons">
 
@@ -57,7 +74,6 @@ El modelo fue entrenado con el dataset MNIST utilizando una red neuronal convolu
 
 </div>
 
-<!-- RESULTADO -->
 
 <h2 id="result"></h2>
 
@@ -67,34 +83,18 @@ El modelo fue entrenado con el dataset MNIST utilizando una red neuronal convolu
 🔎 Analizando imagen...
 </div>
 
-<!-- BARRAS DE PROBABILIDAD -->
 
 <div id="bars"></div>
 
-
-<!-- TOP 3 PREDICCIONES -->
 
 <div class="prediction-info">
 
 <h3>📊 Top 3 predicciones</h3>
 
-<ul id="top3"></ul>
+<div id="top3" class="top3-cards"></div>
 
 </div>
 
-
-<!-- IMAGEN QUE VE EL MODELO -->
-
-<div class="processed">
-
-<h3>🧠 Imagen procesada (28x28)</h3>
-
-<img id="processed-image" width="120">
-
-</div>
-
-
-<!-- CONTADOR -->
 
 <div class="counter">
 📊 Predicciones realizadas: <span id="prediction-count">0</span>
